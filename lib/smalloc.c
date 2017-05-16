@@ -13,22 +13,22 @@
 /* TODO: Make correct precondition and postcondition with on size. */
 /* TODO: Add magic code to check whether a ptr is allocated by smalloc. */
 
-typedef struct __smalloc_node SmallocNode;
+typedef struct __smalloc_node smalloc_node_t;
 struct __smalloc_node {
-    SmallocNode *prev;
-    SmallocNode *next;
+    smalloc_node_t *prev;
+    smalloc_node_t *next;
     size_t size;
 };
 
-static SmallocNode smalloc_list = { &smalloc_list, &smalloc_list, 0 };
+static smalloc_node_t smalloc_list = { &smalloc_list, &smalloc_list, 0 };
 
 static size_t smalloc_count = 0;
 static size_t smalloc_size = 0;
 static int atexit_free = 1;
 static void atexit_sfree_all(void);
 
-static inline void __list_add(SmallocNode * prev, SmallocNode * curr,
-                              SmallocNode * next)
+static inline void __list_add(smalloc_node_t * prev, smalloc_node_t * curr,
+                              smalloc_node_t * next)
 {
     curr->prev = prev;
     curr->next = next;
@@ -36,63 +36,64 @@ static inline void __list_add(SmallocNode * prev, SmallocNode * curr,
     next->prev = curr;
 }
 
-static inline void list_add(SmallocNode * list, SmallocNode * new)
+static inline void list_add(smalloc_node_t * list, smalloc_node_t * new)
 {
     __list_add(list, new, list->next);
 }
 
-static inline void list_add_tail(SmallocNode * list, SmallocNode * new)
+static inline void list_add_tail(smalloc_node_t * list, smalloc_node_t * new)
 {
     __list_add(list->prev, new, list);
 }
 
-static inline int list_is_empty(SmallocNode * list)
+static inline int list_is_empty(smalloc_node_t * list)
 {
     return (list->prev == list->next && list->next == list);
 }
 
-static inline void __list_del(SmallocNode * prev, SmallocNode * next)
+static inline void __list_del(smalloc_node_t * prev, smalloc_node_t * next)
 {
     prev->next = next;
     next->prev = prev;
 }
 
-static inline void list_del(SmallocNode * curr)
+static inline void list_del(smalloc_node_t * curr)
 {
     __list_del(curr->prev, curr->next);
 }
 
-static inline SmallocNode *list_del_tail(SmallocNode * list)
+static inline smalloc_node_t *list_del_tail(smalloc_node_t * list)
 {
-    SmallocNode *tail = list->next;
+    smalloc_node_t *tail = list->next;
 
     list_del(tail);
     return tail;
 }
 
-static inline SmallocNode *list_del_head(SmallocNode * list)
+static inline smalloc_node_t *list_del_head(smalloc_node_t * list)
 {
-    SmallocNode *head = list->next;
+    smalloc_node_t *head = list->next;
 
     list_del(head);
     return head;
 }
 
-static inline void *smalloc_get_store_ptr(SmallocNode * header)
+static inline void *smalloc_get_store(smalloc_node_t * header)
 {
     return header + 1;
 }
 
-static inline void *smalloc_get_header_ptr(void *ptr)
+static inline void *smalloc_get_header(void *ptr)
 {
-    return (SmallocNode *) ptr - 1;
+    return (smalloc_node_t *) ptr - 1;
 }
 
 void *smalloc(size_t size)
 {
     if (size == 0)
         return NULL;
-    SmallocNode *header = (SmallocNode *) malloc(size + sizeof(SmallocNode));
+    smalloc_node_t *header =
+        (smalloc_node_t *) malloc(size + sizeof(smalloc_node_t));
 
     if (header == NULL)
         return NULL;
@@ -102,7 +103,7 @@ void *smalloc(size_t size)
         atexit_free = 0;
     }
     header->size = size;
-    void *ptr = smalloc_get_store_ptr(header);
+    void *ptr = smalloc_get_store(header);
 
     smalloc_count++;
     smalloc_size += size;
@@ -113,7 +114,7 @@ size_t sfree(void *ptr)
 {
     if (ptr == NULL)
         return 0;
-    SmallocNode *header = smalloc_get_header_ptr(ptr);
+    smalloc_node_t *header = smalloc_get_header(ptr);
 
     if (header->prev == NULL || header->next == NULL)
         return 0;
@@ -146,7 +147,7 @@ void *srealloc(void *ptr, size_t size)
 {
     if (ptr == NULL || size == 0)
         return NULL;
-    SmallocNode *header = smalloc_get_header_ptr(ptr);
+    smalloc_node_t *header = smalloc_get_header(ptr);
 
     if (header->prev == NULL || header->next == NULL)
         return NULL;
@@ -178,8 +179,8 @@ size_t sfree_all(void)
 {
     if (list_is_empty(&smalloc_list))
         return 0;
-    SmallocNode *list = &smalloc_list;
-    SmallocNode *node;
+    smalloc_node_t *list = &smalloc_list;
+    smalloc_node_t *node;
 
     for (node = list->prev; node != list; node = list->prev) {
         list_del(node);

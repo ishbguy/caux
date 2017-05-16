@@ -8,8 +8,8 @@
 
 #include <stddef.h>
 
-typedef void * StackDataPtr;
-typedef struct _stack Stack;
+typedef void *stack_data_t;
+typedef struct __stack stack_t;
 
 /**
  * @brief       Initialize a new stack.
@@ -18,7 +18,7 @@ typedef struct _stack Stack;
  *
  * @return      Pointer of the new stack.
  */
-extern Stack *stack_new(size_t size);
+extern stack_t *stack_new(size_t size);
 
 /**
  * @brief       Free a stack.
@@ -27,7 +27,7 @@ extern Stack *stack_new(size_t size);
  *
  * @return      Number of data handle by stack.
  */
-extern size_t stack_free(Stack *stack);
+extern size_t stack_free(stack_t * stack);
 
 /**
  * @brief       Push data into a stack.
@@ -37,7 +37,7 @@ extern size_t stack_free(Stack *stack);
  *
  * @return      The depth of the stack.
  */
-extern size_t stack_push(Stack *stack, StackDataPtr data);
+extern size_t stack_push(stack_t * stack, stack_data_t data);
 
 /**
  * @brief       Pop data out from a stack.
@@ -46,7 +46,7 @@ extern size_t stack_push(Stack *stack, StackDataPtr data);
  *
  * @return      Pointer of a data.
  */
-extern StackDataPtr stack_pop(Stack *stack);
+extern stack_data_t stack_pop(stack_t * stack);
 
 #endif /* End of include guard: __STACK_H__ */
 

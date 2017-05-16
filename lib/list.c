@@ -15,17 +15,17 @@ enum {
 };
 
 struct __list_node {
-    ListNode *prev;
-    ListNode *next;
-    ListDataPtr data;
+    list_node_t *prev;
+    list_node_t *next;
+    list_data_t data;
 };
 
 #define LIST_INIT(name)   \
-    const ListNode name = {&name, &name, NULL}
+    const list_node_t name = {&name, &name, NULL}
 
-ListNode *list_new(void)
+list_node_t *list_new(void)
 {
-    ListNode *list = (ListNode *) malloc(sizeof(ListNode));
+    list_node_t *list = (list_node_t *) malloc(sizeof(list_node_t));
 
     if (list == NULL)
         return NULL;
@@ -35,14 +35,15 @@ ListNode *list_new(void)
     return list;
 }
 
-void list_free(ListNode * list)
+void list_free(list_node_t * list)
 {
     if (list == NULL)
         return;
     free(list);
 }
 
-static inline void __list_add(ListNode * prev, ListNode * curr, ListNode * next)
+static inline void __list_add(list_node_t * prev, list_node_t * curr,
+                              list_node_t * next)
 {
     curr->prev = prev;
     curr->next = next;
@@ -50,12 +51,12 @@ static inline void __list_add(ListNode * prev, ListNode * curr, ListNode * next)
     next->prev = curr;
 }
 
-static inline void __list_add_head(ListNode * list, ListNode * new)
+static inline void __list_add_head(list_node_t * list, list_node_t * new)
 {
     __list_add(list, new, list->next);
 }
 
-ListNode *list_add_head(ListNode * list, ListDataPtr data)
+list_node_t *list_add_head(list_node_t * list, list_data_t data)
 {
     if (list == NULL || data == NULL)
         return NULL;
@@ -63,7 +64,7 @@ ListNode *list_add_head(ListNode * list, ListDataPtr data)
     /*
      * Allocate memory for new node. 
      */
-    ListNode *new = (ListNode *) malloc(sizeof(ListNode));
+    list_node_t *new = (list_node_t *) malloc(sizeof(list_node_t));
 
     if (new == NULL)
         return NULL;
@@ -72,12 +73,12 @@ ListNode *list_add_head(ListNode * list, ListDataPtr data)
     return new;
 }
 
-static inline void __list_add_tail(ListNode * list, ListNode * new)
+static inline void __list_add_tail(list_node_t * list, list_node_t * new)
 {
     __list_add(list->prev, new, list);
 }
 
-ListNode *list_add_tail(ListNode * list, ListNode * data)
+list_node_t *list_add_tail(list_node_t * list, list_data_t data)
 {
     if (list == NULL || data == NULL)
         return NULL;
@@ -85,7 +86,7 @@ ListNode *list_add_tail(ListNode * list, ListNode * data)
     /*
      * Allocate memory for new node. 
      */
-    ListNode *new = (ListNode *) malloc(sizeof(ListNode));
+    list_node_t *new = (list_node_t *) malloc(sizeof(list_node_t));
 
     if (new == NULL)
         return NULL;
@@ -94,34 +95,34 @@ ListNode *list_add_tail(ListNode * list, ListNode * data)
     return new;
 }
 
-static inline void __list_del(ListNode * prev, ListNode * next)
+static inline void __list_del(list_node_t * prev, list_node_t * next)
 {
     prev->next = next;
     next->prev = prev;
 }
 
-static inline void __list_del_node(ListNode * node)
+static inline void __list_del_node(list_node_t * node)
 {
     __list_del(node->prev, node->next);
 }
 
-static inline int __list_is_empty(ListNode * list)
+static inline int __list_is_empty(list_node_t * list)
 {
     return (list->prev == list->next && list->prev == list);
 }
 
-int list_is_empty(ListNode * list)
+int list_is_empty(list_node_t * list)
 {
     if (list == NULL)
         return NULL_PTR;
     return __list_is_empty(list);
 }
 
-ListDataPtr *list_del_node(ListNode * node)
+list_data_t list_del_node(list_node_t * node)
 {
     if (node == NULL)
         return NULL;
-    ListDataPtr data = node->data;
+    list_data_t data = node->data;
 
     __list_del_node(node);
     node->prev = NULL;
@@ -130,27 +131,27 @@ ListDataPtr *list_del_node(ListNode * node)
     return data;
 }
 
-ListDataPtr list_del_tail(ListNode * list)
+list_data_t list_del_tail(list_node_t * list)
 {
     if (list == NULL || __list_is_empty(list))
         return NULL;
-    ListNode *tail = list->prev;
+    list_node_t *tail = list->prev;
 
     return list_del_node(tail);
 }
 
-ListDataPtr list_del_head(ListNode * list)
+list_data_t list_del_head(list_node_t * list)
 {
     if (list == NULL)
         return FAILED;
     if (__list_is_empty(list))
         return FAILED;
-    ListNode *head = list->next;
+    list_node_t *head = list->next;
 
     return list_del_node(head);
 }
 
-static inline void __list_repalce_node(ListNode * new, ListNode * old)
+static inline void __list_repalce_node(list_node_t * new, list_node_t * old)
 {
     new->prev = old->prev;
     new->prev->next = new;
@@ -158,7 +159,7 @@ static inline void __list_repalce_node(ListNode * new, ListNode * old)
     new->next->prev = new;
 }
 
-int list_replace_node(ListNode * new, ListNode * old)
+int list_replace_node(list_node_t * new, list_node_t * old)
 {
     if (new == NULL || old == NULL)
         return FAILED;
@@ -166,7 +167,7 @@ int list_replace_node(ListNode * new, ListNode * old)
     return SUCCESS;
 }
 
-int list_move_node(ListNode * list, ListNode * node)
+int list_move_head_node(list_node_t * list, list_node_t * node)
 {
     if (node == NULL || list == NULL)
         return FAILED;
@@ -175,7 +176,7 @@ int list_move_node(ListNode * list, ListNode * node)
     return SUCCESS;
 }
 
-int list_move_tail_node(ListNode * list, ListNode * node)
+int list_move_tail_node(list_node_t * list, list_node_t * node)
 {
     if (node == NULL || list == NULL)
         return FAILED;
@@ -184,23 +185,23 @@ int list_move_tail_node(ListNode * list, ListNode * node)
     return SUCCESS;
 }
 
-int list_rotate_node(ListNode * list)
+int list_rotate_node(list_node_t * list)
 {
     if (list == NULL)
         return FAILED;
     if (__list_is_empty(list))
         return FAILED;
-    ListNode *head = list->next;
+    list_node_t *head = list->next;
 
     __list_del_node(head);
     __list_add_tail(list, head);
     return SUCCESS;
 }
 
-static inline void __list_cut(ListNode * list, ListNode * new_list,
-                              ListNode * prev, ListNode * next)
+static inline void __list_cut(list_node_t * list, list_node_t * new_list,
+                              list_node_t * prev, list_node_t * next)
 {
-    ListNode *tail = list->prev;
+    list_node_t *tail = list->prev;
 
     list->prev = prev;
     prev->next = list;

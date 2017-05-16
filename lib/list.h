@@ -6,21 +6,21 @@
 #ifndef __LIST_H__
 #define __LIST_H__
 
-typedef struct __list_node ListNode;
-typedef void * ListDataPtr;
+typedef struct __list_node list_node_t;
+typedef void *list_data_t;
 
-extern ListNode *list_new(void);
-extern void list_free(ListNode * list);
-extern ListNode *list_add_head(ListNode * list, ListDataPtr data);
-extern ListNode *list_add_tail(ListNode * list, ListNode * data);
-extern int list_is_empty(ListNode * list);
-extern ListDataPtr *list_del_node(ListNode * node);
-extern ListDataPtr list_del_tail(ListNode * list);
-extern ListDataPtr list_del_head(ListNode * list);
-extern int list_replace_node(ListNode * new, ListNode * old);
-extern int list_move_node(ListNode * list, ListNode * node);
-extern int list_move_tail_node(ListNode * list, ListNode * node);
-extern int list_rotate_node(ListNode * list);
+extern list_node_t *list_new(void);
+extern void list_free(list_node_t * list);
+extern list_node_t *list_add_head(list_node_t * list, list_data_t data);
+extern list_node_t *list_add_tail(list_node_t * list, list_data_t data);
+extern int list_is_empty(list_node_t * list);
+extern list_data_t list_del_node(list_node_t * node);
+extern list_data_t list_del_tail(list_node_t * list);
+extern list_data_t list_del_head(list_node_t * list);
+extern int list_replace_node(list_node_t * new, list_node_t * old);
+extern int list_move_head_node(list_node_t * list, list_node_t * node);
+extern int list_move_tail_node(list_node_t * list, list_node_t * node);
+extern int list_rotate_node(list_node_t * list);
 
 #endif /* End of include guard: __LIST_H__ */
 
