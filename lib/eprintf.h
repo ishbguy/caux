@@ -36,10 +36,10 @@ extern void setprogname(char *str);
 #define XREALLOC(ptr, size) \
     erealloc((ptr), (size), __LINE__, __LINE__, __func__)
 #define XFREE(ptr) \
-    efree((ptr), __FILE__, __LINE__, __func__)
+    efree((ptr), __FILE__, __LINE__, __func__), ptr = NULL
 
-#define XNEW(ptr) ptr = XMALLOC(sizeof(*ptr))
-#define XNEW0(ptr) ptr = XCALLOC(1, sizeof(*ptr))
+#define XNEW(ptr) ptr = XMALLOC(sizeof(*(ptr)))
+#define XNEW0(ptr) ptr = XCALLOC(1, sizeof(*(ptr)))
 
 #endif /* End of include guard: __EPRINTF_H__ */
 

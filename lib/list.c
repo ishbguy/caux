@@ -3,8 +3,8 @@
  *               All Rights Reserved
  */
 
+#include <stdlib.h>
 #include "list.h"
-#include "smalloc.h"
 
 enum {
     FLASE = 0,
@@ -20,12 +20,9 @@ struct __list_node {
     list_data_t data;
 };
 
-#define LIST_INIT(name)   \
-    const list_node_t name = {&name, &name, NULL}
-
-list_node_t *list_new(void)
+list_t *list_new(void)
 {
-    list_node_t *list = (list_node_t *) malloc(sizeof(list_node_t));
+    list_t *list = (list_t *) malloc(sizeof(list_node_t));
 
     if (list == NULL)
         return NULL;
@@ -35,7 +32,7 @@ list_node_t *list_new(void)
     return list;
 }
 
-void list_free(list_node_t * list)
+void list_free(list_t * list)
 {
     if (list == NULL)
         return;
@@ -51,12 +48,12 @@ static inline void __list_add(list_node_t * prev, list_node_t * curr,
     next->prev = curr;
 }
 
-static inline void __list_add_head(list_node_t * list, list_node_t * new)
+static inline void __list_add_head(list_t * list, list_node_t * new)
 {
     __list_add(list, new, list->next);
 }
 
-list_node_t *list_add_head(list_node_t * list, list_data_t data)
+list_t *list_add_head(list_t * list, list_data_t data)
 {
     if (list == NULL || data == NULL)
         return NULL;
@@ -73,12 +70,12 @@ list_node_t *list_add_head(list_node_t * list, list_data_t data)
     return new;
 }
 
-static inline void __list_add_tail(list_node_t * list, list_node_t * new)
+static inline void __list_add_tail(list_t * list, list_node_t * new)
 {
     __list_add(list->prev, new, list);
 }
 
-list_node_t *list_add_tail(list_node_t * list, list_data_t data)
+list_t *list_add_tail(list_t * list, list_data_t data)
 {
     if (list == NULL || data == NULL)
         return NULL;
@@ -106,12 +103,12 @@ static inline void __list_del_node(list_node_t * node)
     __list_del(node->prev, node->next);
 }
 
-static inline int __list_is_empty(list_node_t * list)
+static inline int __list_is_empty(list_t * list)
 {
     return (list->prev == list->next && list->prev == list);
 }
 
-int list_is_empty(list_node_t * list)
+int list_is_empty(list_t * list)
 {
     if (list == NULL)
         return NULL_PTR;
@@ -131,7 +128,7 @@ list_data_t list_del_node(list_node_t * node)
     return data;
 }
 
-list_data_t list_del_tail(list_node_t * list)
+list_data_t list_del_tail(list_t * list)
 {
     if (list == NULL || __list_is_empty(list))
         return NULL;
@@ -140,7 +137,7 @@ list_data_t list_del_tail(list_node_t * list)
     return list_del_node(tail);
 }
 
-list_data_t list_del_head(list_node_t * list)
+list_data_t list_del_head(list_t * list)
 {
     if (list == NULL)
         return FAILED;
@@ -167,7 +164,7 @@ int list_replace_node(list_node_t * new, list_node_t * old)
     return SUCCESS;
 }
 
-int list_move_head_node(list_node_t * list, list_node_t * node)
+int list_move_head_node(list_t * list, list_node_t * node)
 {
     if (node == NULL || list == NULL)
         return FAILED;
@@ -176,7 +173,7 @@ int list_move_head_node(list_node_t * list, list_node_t * node)
     return SUCCESS;
 }
 
-int list_move_tail_node(list_node_t * list, list_node_t * node)
+int list_move_tail_node(list_t * list, list_node_t * node)
 {
     if (node == NULL || list == NULL)
         return FAILED;
@@ -185,7 +182,7 @@ int list_move_tail_node(list_node_t * list, list_node_t * node)
     return SUCCESS;
 }
 
-int list_rotate_node(list_node_t * list)
+int list_rotate_node(list_t * list)
 {
     if (list == NULL)
         return FAILED;
@@ -198,7 +195,7 @@ int list_rotate_node(list_node_t * list)
     return SUCCESS;
 }
 
-static inline void __list_cut(list_node_t * list, list_node_t * new_list,
+static inline void __list_cut(list_t * list, list_node_t * new_list,
                               list_node_t * prev, list_node_t * next)
 {
     list_node_t *tail = list->prev;
