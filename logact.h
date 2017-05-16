@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2017 Herbert Shen <ishbguy@hotmail.com>
- *               All Rights Reserved
+ *               All Rights Reserved.
  */
 
 /* Define error log for daemon */
@@ -13,6 +13,8 @@ extern void log_msg(const char *fmt, ...);
 extern void log_ret(const char *fmt, ...);
 extern void log_quit(const char *fmt, ...) __attribute__((noreturn));
 extern void log_sys(const char *fmt, ...) __attribute__((noreturn));
-extern void log_exit(int error, const char *fmt, ...) __attribute__((noreturn));/* What to do */
+extern void log_exit(int error, const char *fmt, ...) __attribute__((noreturn));
 
 #endif /* End of include guard: __LOGACT_H__ */
+
+/* vim:set ft=c ts=4 sw=4: */

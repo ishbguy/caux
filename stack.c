@@ -1,7 +1,8 @@
-/* 
- * Copyright (c) 2016 Herbert Shen <ishbguy@hotmail.com>
- *               All Rights Reserved
+/*
+ * Copyright (c) 2017 Herbert Shen <ishbguy@hotmail.com>
+ *               All Rights Reserved.
  */
+
 #include <string.h>
 #include "stack.h"
 #include "smalloc.h"
@@ -98,3 +99,5 @@ StackDataPtr stack_pop(Stack *stack)
     stack->store[stack->depth] = NULL;
     return data;
 }
+
+/* vim:set ft=c ts=4 sw=4: */

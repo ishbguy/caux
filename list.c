@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Herbert Shen <ishbguy@hotmail.com>
+ * Copyright (c) 2017 Herbert Shen <ishbguy@hotmail.com>
  *               All Rights Reserved
  */
 
@@ -58,7 +58,7 @@ ListNode *list_add_head(ListNode *list, ListDataPtr data)
 {
     if (list == NULL || data == NULL)
         return NULL;
-    
+
     /* Allocate memory for new node. */
     ListNode *new = (ListNode *)malloc(sizeof(ListNode));
     if (new == NULL)
@@ -197,3 +197,5 @@ static inline void __list_cut(ListNode *list, ListNode *new_list,
     next->prev = new_list;
     tail->next = new_list;
 }
+
+/* vim:set ft=c ts=4 sw=4: */

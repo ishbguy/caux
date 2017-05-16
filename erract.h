@@ -17,3 +17,5 @@ extern void err_sys(const char *fmt, ...) __attribute__ ((noreturn));
 extern void err_dump(const char *fmt, ...) __attribute__ ((noreturn));
 
 #endif /* End of include guard: __ERRACT_H__ */
+
+/* vim:set ft=c ts=4 sw=4: */

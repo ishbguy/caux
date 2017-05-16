@@ -131,3 +131,5 @@ static void err_doit(int eflag, int error, const char *fmt, va_list ap)
     fputs(buf, stderr);
     fflush(NULL);               /* flushes all stdio output streams */
 }
+
+/* vim:set ft=c ts=4 sw=4: */

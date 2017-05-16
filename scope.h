@@ -1,7 +1,8 @@
-/* 
- * Copyright (c) 2016 Herbert Shen <ishbguy@hotmail.com>
- *               All Rights Reserved
+/*
+ * Copyright (c) 2017 Herbert Shen <ishbguy@hotmail.com>
+ *               All Rights Reserved.
  */
+
 #ifndef __SCOPE_H__
 #define __SCOPE_H__
 
@@ -31,3 +32,5 @@
 } while(0)
 
 #endif /* End of include guard: __SCOPE_H__ */
+
+/* vim:set ft=c ts=4 sw=4: */

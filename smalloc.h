@@ -1,6 +1,6 @@
-/* 
- * Copyright (c) 2016 Herbert Shen <ishbguy@hotmail.com>
- *               All Rights Reserved
+/*
+ * Copyright (c) 2017 Herbert Shen <ishbguy@hotmail.com>
+ *               All Rights Reserved.
  */
 
 #ifndef __SMALLOC_H__
@@ -26,3 +26,5 @@ extern char *sstrdup(const char *str);
 extern size_t sfree_all(void);
 
 #endif /* End of include guard: __SMALLOC_H__ */
+
+/* vim:set ft=c ts=4 sw=4: */

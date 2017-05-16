@@ -1,6 +1,6 @@
-/* 
- * Copyright (c) 2016 Herbert Shen <ishbguy@hotmail.com>
- *               All Rights Reserved
+/*
+ * Copyright (c) 2017 Herbert Shen <ishbguy@hotmail.com>
+ *               All Rights Reserved.
  */
 
 #include <stdlib.h>
@@ -196,3 +196,5 @@ static void atexit_sfree_all(void)
 {
     sfree_all();
 }
+
+/* vim:set ft=c ts=4 sw=4: */

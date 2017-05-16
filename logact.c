@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2017 Herbert Shen <ishbguy@hotmail.com>
- *               All Rights Reserved
+ *               All Rights Reserved.
  */
 
 /* Implement error log for daemon */
@@ -119,3 +119,5 @@ static void log_doit(int eflag, int error, int priority, const char *fmt,
     else
         syslog(priority, "%s", buf);
 }
+
+/* vim:set ft=c ts=4 sw=4: */

@@ -1,7 +1,8 @@
-/* 
- * Copyright (c) 2016 Herbert Shen <ishbguy@hotmail.com>
- *               All Rights Reserved
+/*
+ * Copyright (c) 2017 Herbert Shen <ishbguy@hotmail.com>
+ *               All Rights Reserved.
  */
+
 #ifndef __STACK_H__
 #define __STACK_H__
 
@@ -48,3 +49,5 @@ extern size_t stack_push(Stack *stack, StackDataPtr data);
 extern StackDataPtr stack_pop(Stack *stack);
 
 #endif /* End of include guard: __STACK_H__ */
+
+/* vim:set ft=c ts=4 sw=4: */

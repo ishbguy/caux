@@ -2,6 +2,7 @@
  * Copyright (c) 2017 Herbert Shen <ishbguy@hotmail.com>
  *               All Rights Reserved.
  */
+
 #ifndef __XMACRO_H__
 #define __XMACRO_H__
 
