@@ -10,6 +10,7 @@
 #include <string.h>
 #include <errno.h>
 #include <stdarg.h>
+#include "erract.h"
 
 #define MAXLINE 4096
 
@@ -93,7 +94,7 @@ void err_sys(const char *fmt, ...)
     va_list ap;
 
     va_start(ap, fmt);
-    err_doit(1, errno, fmt, ap);
+    err_doit(1, errno, fmt, ap);    /* Get the env errno */
     va_end(ap);
     exit(EXIT_FAILURE);
 }
