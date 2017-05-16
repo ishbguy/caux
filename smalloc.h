@@ -23,6 +23,6 @@ extern size_t sfree(void *ptr);
 extern void *scalloc(size_t nmemb, size_t size);
 extern void *srealloc(void *ptr, size_t size);
 extern char *sstrdup(const char *str);
-extern size_t sfree_all(void);/* What to do */
+extern size_t sfree_all(void);
 
 #endif /* End of include guard: __SMALLOC_H__ */
