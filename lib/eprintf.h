@@ -25,17 +25,17 @@ extern size_t efree(void *ptr, const char *file, const int line,
 extern char *progname(void);
 extern void setprogname(char *str);
 
-#define xprintf(fmt, ...) \
+#define XPRINTF(fmt, ...) \
     eprintf("%s:%d: %s: " #fmt, __FILE__, __LINE__, __func__, ##__VA_ARGS__)
-#define xstrdup(str) \
+#define XSTRDUP(str) \
     estrdup((str), __FILE__, __LINE__, __func__)
-#define xmalloc(size) \
+#define XMALLOC(size) \
     emalloc((size), __FILE__, __LINE__, __func__)
-#define xcalloc(nmemb, size) \
+#define XCALLOC(nmemb, size) \
     ecalloc((nmemb), (size), __FILE__, __LINE__, __func__)
-#define xrealloc(ptr, size) \
+#define XREALLOC(ptr, size) \
     erealloc((ptr), (size), __LINE__, __LINE__, __func__)
-#define xfree(ptr) \
+#define XFREE(ptr) \
     efree((ptr), __FILE__, __LINE__, __func__)
 
 #endif /* End of include guard: __EPRINTF_H__ */

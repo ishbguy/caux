@@ -12,19 +12,19 @@
 /* 
  * Create a stack to store resource release functions.
  */
-#define ScopeInit() Stack *scope = stack_new(2);            \
+#define SCOPE_INIT() Stack *scope = stack_new(2);            \
                     if(scope == NULL) goto Clean;
 
 /* 
  * Add resource release functions to scope stack.
  */
-#define ScopeGuard(callback)    stack_push(scope, callback)
+#define SCOPE_GUARD(callback)    stack_push(scope, callback)
 
 /* 
  * Use resource release functions in the scope stack to recycle
  * resource, then free scope stack.
  */
-#define ScopeClean()             do {                      \
+#define SCOPE_CLEAN()             do {                      \
     for (void (*fn)(void) = stack_pop(scope);               \
             fn != NULL; fn = stack_pop(scope))              \
         fn();                                              \
