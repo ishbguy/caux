@@ -4,12 +4,16 @@
  */
 
 #include <stdlib.h>
+#include <stdarg.h>
+#include <assert.h>
 #include "list.h"
+
+#define NEW(ptr) malloc(sizeof(*(ptr)))
+#define FREE(ptr) free((ptr)), ptr = NULL
 
 enum {
     FLASE = 0,
     TRUE = 1,
-    NULL_PTR = -1,
     FAILED = 0,
     SUCCESS = 1,
 };
@@ -20,10 +24,21 @@ struct __list_node {
     list_data_t data;
 };
 
+static inline void __list_add(list_node_t * prev, list_node_t * curr,
+                              list_node_t * next);
+static inline void __list_add_head(list_t * list, list_node_t * new);
+static inline void __list_add_tail(list_t * list, list_node_t * new);
+static inline void __list_del(list_node_t * prev, list_node_t * next);
+static inline void __list_del_node(list_node_t * node);
+static inline int __list_is_empty(list_t * list);
+static list_data_t list_del_node(list_node_t * node);
+static inline void __list_repalce_node(list_node_t * new, list_node_t * old);
+
 list_t *list_new(void)
 {
-    list_t *list = (list_t *) malloc(sizeof(list_node_t));
+    list_t *list;
 
+    NEW(list);
     if (list == NULL)
         return NULL;
     list->prev = list;
@@ -32,11 +47,21 @@ list_t *list_new(void)
     return list;
 }
 
+void list_free_node(list_t * list)
+{
+    list_node_t *pos, *save;
+
+    if (list)
+        LIST_FOR_EACH_SAFE(pos, save, list)
+            list_del_node(pos);
+}
+
 void list_free(list_t * list)
 {
-    if (list == NULL)
-        return;
-    free(list);
+    if (list) {
+        list_free_node(list);
+        FREE(list);
+    }
 }
 
 static inline void __list_add(list_node_t * prev, list_node_t * curr,
@@ -55,14 +80,11 @@ static inline void __list_add_head(list_t * list, list_node_t * new)
 
 list_t *list_add_head(list_t * list, list_data_t data)
 {
-    if (list == NULL || data == NULL)
-        return NULL;
+    list_node_t *new;
 
-    /*
-     * Allocate memory for new node. 
-     */
-    list_node_t *new = (list_node_t *) malloc(sizeof(list_node_t));
+    assert(list && data);
 
+    NEW(new);
     if (new == NULL)
         return NULL;
     __list_add_head(list, new);
@@ -77,14 +99,11 @@ static inline void __list_add_tail(list_t * list, list_node_t * new)
 
 list_t *list_add_tail(list_t * list, list_data_t data)
 {
-    if (list == NULL || data == NULL)
-        return NULL;
+    list_node_t *new;
 
-    /*
-     * Allocate memory for new node. 
-     */
-    list_node_t *new = (list_node_t *) malloc(sizeof(list_node_t));
+    assert(list && data);
 
+    NEW(new);
     if (new == NULL)
         return NULL;
     __list_add_tail(list, new);
@@ -110,41 +129,46 @@ static inline int __list_is_empty(list_t * list)
 
 int list_is_empty(list_t * list)
 {
-    if (list == NULL)
-        return NULL_PTR;
-    return __list_is_empty(list);
+    if (list)
+        return __list_is_empty(list);
+    return FLASE;
 }
 
-list_data_t list_del_node(list_node_t * node)
+static list_data_t list_del_node(list_node_t * node)
 {
-    if (node == NULL)
-        return NULL;
-    list_data_t data = node->data;
+    list_data_t data;
 
+    assert(node);
+
+    data = node->data;
     __list_del_node(node);
     node->prev = NULL;
     node->next = NULL;
-    free(node);
+    FREE(node);
     return data;
 }
 
 list_data_t list_del_tail(list_t * list)
 {
-    if (list == NULL || __list_is_empty(list))
-        return NULL;
-    list_node_t *tail = list->prev;
+    list_node_t *tail;
 
+    assert(list);
+
+    if (__list_is_empty(list))
+        return NULL;
+    tail = list->prev;
     return list_del_node(tail);
 }
 
 list_data_t list_del_head(list_t * list)
 {
-    if (list == NULL)
-        return FAILED;
-    if (__list_is_empty(list))
-        return FAILED;
-    list_node_t *head = list->next;
+    list_node_t *head;
 
+    assert(list);
+
+    if (__list_is_empty(list))
+        return NULL;
+    head = list->next;
     return list_del_node(head);
 }
 
@@ -158,15 +182,17 @@ static inline void __list_repalce_node(list_node_t * new, list_node_t * old)
 
 int list_replace_node(list_node_t * new, list_node_t * old)
 {
-    if (new == NULL || old == NULL)
-        return FAILED;
+    assert(new && old);
+
     __list_repalce_node(new, old);
     return SUCCESS;
 }
 
 int list_move_head_node(list_t * list, list_node_t * node)
 {
-    if (node == NULL || list == NULL)
+    assert(list && node);
+
+    if (__list_is_empty(list))
         return FAILED;
     __list_del_node(node);
     __list_add_head(list, node);
@@ -175,37 +201,126 @@ int list_move_head_node(list_t * list, list_node_t * node)
 
 int list_move_tail_node(list_t * list, list_node_t * node)
 {
-    if (node == NULL || list == NULL)
+    assert(list && node);
+
+    if (__list_is_empty(list))
         return FAILED;
     __list_del_node(node);
     __list_add_tail(list, node);
     return SUCCESS;
 }
 
-int list_rotate_node(list_t * list)
+int list_rotate(list_t * list)
 {
-    if (list == NULL)
-        return FAILED;
+    list_node_t *head;
+
+    assert(list);
+
     if (__list_is_empty(list))
         return FAILED;
-    list_node_t *head = list->next;
-
+    head = list->next;
     __list_del_node(head);
     __list_add_tail(list, head);
     return SUCCESS;
 }
 
-static inline void __list_cut(list_t * list, list_node_t * new_list,
-                              list_node_t * prev, list_node_t * next)
+int list_length(list_t * list)
 {
-    list_node_t *tail = list->prev;
+    int count;
+    list_node_t *pos;
 
-    list->prev = prev;
-    prev->next = list;
-    new_list->prev = tail;
-    new_list->next = next;
-    next->prev = new_list;
-    tail->next = new_list;
+    if (list) {
+        count = 0;
+        LIST_FOR_EACH(pos, list)
+            count++;
+        return count;
+    }
+    return 0;
+}
+
+list_t *list_copy(list_t * list)
+{
+    list_t *new;
+    list_node_t *pos, *tmp;
+
+    if (list == NULL)
+        return NULL;
+    if (__list_is_empty(list))
+        return NULL;
+    new = list_new();
+    LIST_FOR_EACH(pos, list) {
+        NEW(tmp);
+        tmp->data = pos->data;
+        __list_add_tail(new, tmp);
+    }
+    return new;
+}
+
+void list_map(list_t * list, void apply(void **data, void *aux), void *aux)
+{
+    list_node_t *pos;
+
+    if (list) {
+        LIST_FOR_EACH(pos, list)
+            apply(&(pos->data), aux);
+    }
+}
+
+list_data_t *list_to_array(list_t * list)
+{
+    list_node_t *pos;
+    list_data_t *array;
+    int len;
+
+    if (list == NULL)
+        return NULL;
+    if (__list_is_empty(list))
+        return NULL;
+    len = list_length(list);
+    array = malloc(sizeof(list_data_t) * len);
+    if (array == NULL)
+        return NULL;
+    LIST_FOR_EACH(pos, list)
+        *array++ = pos->data;
+    return array;
+}
+
+list_t *list_from_array(list_data_t * array, size_t size)
+{
+    list_t *list;
+    list_node_t *tmp;
+    int i;
+
+    if (array == NULL || size == 0)
+        return NULL;
+    list = list_new();
+    if (list == NULL)
+        return NULL;
+    for (i = 0; i < size; i++) {
+        NEW(tmp);
+        tmp->data = *array++;
+        __list_add_tail(list, tmp);
+    }
+    return list;
+}
+
+list_t *list_vnew(list_data_t x, ...)
+{
+    va_list ap;
+    list_t *list;
+    list_node_t *tmp;
+
+    va_start(ap, x);
+    list = list_new();
+    if (list == NULL)
+        return NULL;
+    for (; x; x = va_arg(ap, list_data_t)) {
+        NEW(tmp);
+        tmp->data = x;
+        __list_add_tail(list, tmp);
+    }
+    va_end(ap);
+    return list;
 }
 
 /* vim:set ft=c ts=4 sw=4: */
