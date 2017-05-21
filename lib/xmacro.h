@@ -84,6 +84,13 @@
  */
 #define NELEM(a) (sizeof(a)/sizeof(*a))
 
+#define ARRAY_FOR_EACH(i, a) \
+    for (i = 0; i < NELEM(a); i++)
+
+/* a is an ptr array whose last element is NULL pointer */
+#define ARRAY_FOR_EACH_PTR(ptr, a) \
+    for (ptr = a; ptr && *ptr; ptr++)
+
 #endif /* End of include guard: __XMACRO_H__ */
 
 /* vim:set ft=c ts=4 sw=4: */
