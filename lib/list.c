@@ -8,9 +8,6 @@
 #include <assert.h>
 #include "list.h"
 
-#define NEW(ptr) ptr = malloc(sizeof(*(ptr)))
-#define FREE(ptr) free((ptr)), ptr = NULL
-
 enum {
     FLASE = 0,
     TRUE = 1,
@@ -24,7 +21,6 @@ static inline void __list_add_head(list_t * list, list_node_t * node);
 static inline void __list_add_tail(list_t * list, list_node_t * node);
 static inline void __list_del(list_node_t * prev, list_node_t * next);
 static inline void __list_del_node(list_node_t * node);
-static list_data_t list_del_node(list_node_t * node);
 static inline void __list_repalce_node(list_node_t * new_node,
                                        list_node_t * old_node);
 static inline int __list_is_empty(list_t * list);
@@ -189,7 +185,7 @@ static inline void __list_del_node(list_node_t * node)
     __list_del(node->prev, node->next);
 }
 
-static list_data_t list_del_node(list_node_t * node)
+list_data_t list_del_node(list_node_t * node)
 {
     list_data_t data;
 
@@ -197,8 +193,6 @@ static list_data_t list_del_node(list_node_t * node)
 
     data = node->data;
     __list_del_node(node);
-    node->prev = NULL;
-    node->next = NULL;
     FREE(node);
     return data;
 }

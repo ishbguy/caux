@@ -6,6 +6,8 @@
 #ifndef __XMACRO_H__
 #define __XMACRO_H__
 
+#include <stdlib.h>
+
 /* compile as c++ code */
 #ifdef __cplusplus
 #define XDECL_BEGIN extern "C" {
@@ -90,6 +92,14 @@
 /* a is an ptr array whose last element is NULL pointer */
 #define ARRAY_FOR_EACH_PTR(ptr, a) \
     for (ptr = a; ptr && *ptr; ptr++)
+
+/* memory allocated functions macros. */
+#define MALLOC(ptr, size) ptr = malloc(size)
+#define CALLOC(ptr, num, size) ptr = calloc(num, size)
+#define REALLOC(ptr, size) ptr = realloc(size)
+#define STRDUP(dest, src) dest = strdup(src)
+#define NEW(ptr) ptr = malloc(sizeof(*(ptr)))
+#define FREE(ptr) free((ptr)), ptr = NULL
 
 #endif /* End of include guard: __XMACRO_H__ */
 

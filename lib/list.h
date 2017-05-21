@@ -7,6 +7,7 @@
 #define __LIST_H__
 
 #include <stddef.h>
+#include "xmacro.h"
 
 typedef struct __list_node list_node_t;
 typedef struct __list_node list_t;
@@ -19,7 +20,7 @@ struct __list_node {
 };
 
 #define LIST_STATIC_INIT(list)   \
-    const list_t list = {&list, &list, NULL}
+    list_t list = {&list, &list, NULL}
 
 #define LIST_FOR_EACH_DIR(pos, list, dir) \
     for ((pos) = (list)->dir; (pos) != (list); pos = (pos)->dir)
@@ -48,6 +49,7 @@ extern void list_free(list_t ** list);
 extern void list_free_node(list_t * list);
 extern list_node_t *list_add_head(list_t * list, list_data_t data);
 extern list_node_t *list_add_tail(list_t * list, list_data_t data);
+extern list_data_t list_del_node(list_node_t * node);
 extern list_data_t list_del_tail(list_t * list);
 extern list_data_t list_del_head(list_t * list);
 extern int list_is_empty(list_t * list);
@@ -62,7 +64,7 @@ extern void list_map(list_t * list, void apply(list_data_t * data, void *aux),
 #define LIST_FREE(list) list_free(&(list))
 
 #define LIST_FROM_ARRAY(list, array) \
-    list = list_from_array((list_data_t *)(array), sizeof(array)/sizeof(*array))
+    list = list_from_array((list_data_t *)(array), NELEM(array))
 
 #define LIST_TO_ARRAY(array, list) array = list_to_array(list)
 
