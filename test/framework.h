@@ -13,8 +13,7 @@
 extern int main_ret;
 extern int test_count;
 extern int test_pass; 
-
-#define FLOAT_PREC (0.0001)
+extern int test_fail;
 
 #define EXPECT_EQ_BASE(equality, expect, actual, format)                      \
     do {                                                                      \
@@ -24,6 +23,7 @@ extern int test_pass;
         else {                                                                \
             fprintf(stderr, "%s:%d: expect: " format " actual: " format "\n", \
                     __FILE__, __LINE__, expect, actual);                      \
+            test_fail++;                                                      \
             main_ret = 1;                                                     \
         }                                                                     \
     } while(0)
@@ -37,8 +37,8 @@ extern int test_pass;
 #define EXPECT_EQ_NULL(actual)                                                \
     EXPECT_EQ_BASE((NULL) == (actual), NULL, actual, "%p")
 
-#define EXPECT_EQ_FLOAT(expect, actual)                                       \
-    EXPECT_EQ_BASE((abs((expect) - (actual)) < FLOAT_PREC),                   \
+#define EXPECT_EQ_FLOAT(expect, actual, prec)                                 \
+    EXPECT_EQ_BASE((abs((expect) - (actual)) < (prec)),                       \
             expect, actual, "%f")
 
 #define EXPECT_EQ_STR(expect, actual)                                         \
@@ -53,8 +53,8 @@ extern int test_pass;
 #define EXPECT_NE_NULL(actual)                                                \
     EXPECT_EQ_BASE((NULL) != (actual), NULL, actual, "%p")
 
-#define EXPECT_NE_FLOAT(expect, actual)                                       \
-    EXPECT_EQ_BASE((abs((expect) - (actual)) > FLOAT_PREC),                   \
+#define EXPECT_NE_FLOAT(expect, actual, prec)                                 \
+    EXPECT_EQ_BASE((abs((expect) - (actual)) > (prec)),                       \
             expect, actual, "%f")
 
 #define EXPECT_NE_STR(expect, actual)                                         \
@@ -67,6 +67,7 @@ extern int test_pass;
             test_pass++;                                                      \
         else {                                                                \
             fprintf(stderr, "%s:%d: " #expr "failed.\n", __FILE__, __LINE__); \
+            test_fail++;                                                      \
             main_ret = 1;                                                     \
         }                                                                     \
     } while(0)

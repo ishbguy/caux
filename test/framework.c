@@ -8,6 +8,7 @@
 int main_ret = 0;
 int test_count = 0;
 int test_pass = 0; 
+int test_fail = 0;
 
 static void run_test(UnitTest test)
 {
