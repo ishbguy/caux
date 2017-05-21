@@ -42,7 +42,8 @@ extern int test_fail;
             expect, actual, "%f")
 
 #define EXPECT_EQ_STR(expect, actual)                                         \
-    EXPECT_EQ_BASE((!strcmp((expect), (actual))), expect, actual, "%s")
+    EXPECT_EQ_BASE((!strcmp((expect), (char *)(actual))),                     \
+            expect, (char *)actual, "%s")
 
 #define EXPECT_NE_INT(expect, actual)                                         \
     EXPECT_EQ_BASE((expect) != (actual), expect, actual, "%d")
@@ -58,7 +59,8 @@ extern int test_fail;
             expect, actual, "%f")
 
 #define EXPECT_NE_STR(expect, actual)                                         \
-    EXPECT_EQ_BASE((strcmp((expect), (actual))), expect, actual, "%s")
+    EXPECT_EQ_BASE((strcmp((expect), (char *)(actual))),                      \
+            expect, (char *)actual, "%s")
 
 #define EXPECT_BOOL(expr)                                                     \
     do {                                                                      \
