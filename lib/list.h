@@ -18,8 +18,8 @@ struct __list_node {
     list_data_t data;
 };
 
-#define LIST_STATIC_INIT(name)   \
-    const list_t name = {&name, &name, NULL}
+#define LIST_STATIC_INIT(list)   \
+    const list_t list = {&list, &list, NULL}
 
 #define LIST_FOR_EACH_DIR(pos, list, dir) \
     for ((pos) = (list)->dir; (pos) != (list); pos = (pos)->dir)
@@ -56,10 +56,15 @@ extern int list_length(list_t * list);
 extern void list_map(list_t * list, void apply(list_data_t * data, void *aux),
                      void *aux);
 
-#define LIST_NEW(name) name = list_new()
-#define LIST_VNEW(name, x, ...) name = list_vnew(x, ##__VA_ARGS__)
+#define LIST_NEW(list) list = list_new()
+#define LIST_VNEW(list, x, ...) list = list_vnew(x, ##__VA_ARGS__)
 #define LIST_COPY(dest, src) dest = list_copy((src))
-#define LIST_FREE(name) list_free(&(name))
+#define LIST_FREE(list) list_free(&(list))
+
+#define LIST_FROM_ARRAY(list, array) \
+    list = list_from_array((list_data_t *)(array), sizeof(array)/sizeof(*array))
+
+#define LIST_TO_ARRAY(array, list) array = list_to_array(list)
 
 #endif /* End of include guard: __LIST_H__ */
 

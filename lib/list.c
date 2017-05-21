@@ -100,7 +100,7 @@ list_t *list_from_array(list_data_t * array, size_t size)
 list_data_t *list_to_array(list_t * list)
 {
     list_node_t *pos;
-    list_data_t *array;
+    list_data_t *array, *tmp;
     int len;
 
     if (list == NULL)
@@ -110,8 +110,9 @@ list_data_t *list_to_array(list_t * list)
     len = list_length(list);
     array = malloc(sizeof(list_data_t) * len);
     assert(array);
+    tmp = array;
     LIST_FOR_EACH(pos, list)
-        * array++ = pos->data;
+        * tmp++ = pos->data;
     return array;
 }
 
