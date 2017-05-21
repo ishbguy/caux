@@ -8,7 +8,7 @@
 #include <assert.h>
 #include "list.h"
 
-#define NEW(ptr) malloc(sizeof(*(ptr)))
+#define NEW(ptr) ptr = malloc(sizeof(*(ptr)))
 #define FREE(ptr) free((ptr)), ptr = NULL
 
 enum {
