@@ -26,12 +26,13 @@ struct __list_node {
 
 static inline void __list_add(list_node_t * prev, list_node_t * curr,
                               list_node_t * next);
-static inline void __list_add_head(list_t * list, list_node_t * new);
-static inline void __list_add_tail(list_t * list, list_node_t * new);
+static inline void __list_add_head(list_t * list, list_node_t * node);
+static inline void __list_add_tail(list_t * list, list_node_t * node);
 static inline void __list_del(list_node_t * prev, list_node_t * next);
 static inline void __list_del_node(list_node_t * node);
 static list_data_t list_del_node(list_node_t * node);
-static inline void __list_repalce_node(list_node_t * new, list_node_t * old);
+static inline void __list_repalce_node(list_node_t * new_node,
+                                       list_node_t * old_node);
 static inline int __list_is_empty(list_t * list);
 
 list_t *list_new(void)
@@ -68,20 +69,20 @@ list_t *list_vnew(list_data_t x, ...)
 
 list_t *list_copy(list_t * list)
 {
-    list_t *new;
+    list_t *new_list;
     list_node_t *pos, *tmp;
 
     if (list == NULL)
         return NULL;
     if (__list_is_empty(list))
         return NULL;
-    new = list_new();
+    new_list = list_new();
     LIST_FOR_EACH(pos, list) {
         NEW(tmp);
         tmp->data = pos->data;
-        __list_add_tail(new, tmp);
+        __list_add_tail(new_list, tmp);
     }
-    return new;
+    return new_list;
 }
 
 list_t *list_from_array(list_data_t * array, size_t size)
@@ -118,7 +119,7 @@ list_data_t *list_to_array(list_t * list)
     if (array == NULL)
         return NULL;
     LIST_FOR_EACH(pos, list)
-        *array++ = pos->data;
+        * array++ = pos->data;
     return array;
 }
 
@@ -148,42 +149,42 @@ static inline void __list_add(list_node_t * prev, list_node_t * curr,
     next->prev = curr;
 }
 
-static inline void __list_add_head(list_t * list, list_node_t * new)
+static inline void __list_add_head(list_t * list, list_node_t * node)
 {
-    __list_add(list, new, list->next);
+    __list_add(list, node, list->next);
 }
 
 list_node_t *list_add_head(list_t * list, list_data_t data)
 {
-    list_node_t *new;
+    list_node_t *node;
 
     assert(list && data);
 
-    NEW(new);
-    if (new == NULL)
+    NEW(node);
+    if (node == NULL)
         return NULL;
-    __list_add_head(list, new);
-    new->data = data;
-    return new;
+    __list_add_head(list, node);
+    node->data = data;
+    return node;
 }
 
-static inline void __list_add_tail(list_t * list, list_node_t * new)
+static inline void __list_add_tail(list_t * list, list_node_t * node)
 {
-    __list_add(list->prev, new, list);
+    __list_add(list->prev, node, list);
 }
 
 list_node_t *list_add_tail(list_t * list, list_data_t data)
 {
-    list_node_t *new;
+    list_node_t *node;
 
     assert(list && data);
 
-    NEW(new);
-    if (new == NULL)
+    NEW(node);
+    if (node == NULL)
         return NULL;
-    __list_add_tail(list, new);
-    new->data = data;
-    return new;
+    __list_add_tail(list, node);
+    node->data = data;
+    return node;
 }
 
 static inline void __list_del(list_node_t * prev, list_node_t * next)
@@ -235,19 +236,20 @@ list_data_t list_del_head(list_t * list)
     return list_del_node(head);
 }
 
-static inline void __list_repalce_node(list_node_t * new, list_node_t * old)
+static inline void __list_repalce_node(list_node_t * new_node,
+                                       list_node_t * old_node)
 {
-    new->prev = old->prev;
-    new->prev->next = new;
-    new->next = old->next;
-    new->next->prev = new;
+    new_node->prev = old_node->prev;
+    new_node->prev->next = new_node;
+    new_node->next = old_node->next;
+    new_node->next->prev = new_node;
 }
 
-int list_replace_node(list_node_t * new, list_node_t * old)
+int list_replace_node(list_node_t * new_node, list_node_t * old_node)
 {
-    assert(new && old);
+    assert(new_node && old_node);
 
-    __list_repalce_node(new, old);
+    __list_repalce_node(new_node, old_node);
     return SUCCESS;
 }
 
@@ -313,7 +315,8 @@ int list_length(list_t * list)
     return 0;
 }
 
-void list_map(list_t * list, void apply(void **data, void *aux), void *aux)
+void list_map(list_t * list, void apply(list_data_t * data, void *aux),
+              void *aux)
 {
     list_node_t *pos;
 

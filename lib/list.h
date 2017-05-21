@@ -12,7 +12,7 @@ typedef struct __list_node list_node_t;
 typedef struct __list_node list_t;
 typedef void *list_data_t;
 
-#define LIST_INIT(name)   \
+#define LIST_STATIC_INIT(name)   \
     const list_t name = {&name, &name, NULL}
 
 #define LIST_FOR_EACH_DIR(pos, list, dir) \
@@ -47,7 +47,7 @@ extern list_data_t list_del_head(list_t * list);
 extern int list_is_empty(list_t * list);
 extern int list_rotate(list_t * list);
 extern int list_length(list_t * list);
-extern void list_map(list_t * list, void apply(void **data, void *aux),
+extern void list_map(list_t * list, void apply(list_data_t * data, void *aux),
                      void *aux);
 
 #endif /* End of include guard: __LIST_H__ */
