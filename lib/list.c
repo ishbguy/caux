@@ -11,38 +11,11 @@
 #define NEW(ptr) ptr = malloc(sizeof(*(ptr)))
 #define FREE(ptr) free((ptr)), ptr = NULL
 
-#define LIST_STATIC_INIT(name)   \
-    const list_t name = {&name, &name, NULL}
-
-#define LIST_FOR_EACH_DIR(pos, list, dir) \
-    for ((pos) = (list)->dir; (pos) != (list); pos = (pos)->dir)
-
-#define LIST_FOR_EACH(pos, list) \
-    LIST_FOR_EACH_DIR((pos), (list), next)
-
-#define LIST_FOR_EACH_PREV(pos, list) \
-    LIST_FOR_EACH_DIR((pos), (list), prev)
-
-#define LIST_FOR_EACH_SAFE_DIR(pos, save, list, dir) \
-    for ((pos) = (list)->dir; (save) = (pos)->dir, (pos) != (list); (pos) = (save))
-
-#define LIST_FOR_EACH_SAFE(pos, save, list) \
-    LIST_FOR_EACH_SAFE_DIR((pos), (save), (list), next)
-
-#define LIST_FOR_EACH_SAFE_PREV(pos, save, list) \
-    LIST_FOR_EACH_SAFE_DIR((pos), (save), (list), prev)
-
 enum {
     FLASE = 0,
     TRUE = 1,
     FAILED = 0,
     SUCCESS = 1,
-};
-
-struct __list_node {
-    list_node_t *prev;
-    list_node_t *next;
-    list_data_t data;
 };
 
 static inline void __list_add(list_node_t * prev, list_node_t * curr,
@@ -151,11 +124,11 @@ void list_free_node(list_t * list)
             list_del_node(pos);
 }
 
-void list_free(list_t * list)
+void list_free(list_t ** list)
 {
     if (list) {
-        list_free_node(list);
-        FREE(list);
+        list_free_node(*list);
+        FREE(*list);
     }
 }
 
