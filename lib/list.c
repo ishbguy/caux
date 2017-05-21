@@ -40,8 +40,7 @@ list_t *list_new(void)
     list_t *list;
 
     NEW(list);
-    if (list == NULL)
-        return NULL;
+    assert(list);
     list->prev = list;
     list->next = list;
     list->data = NULL;
@@ -56,8 +55,7 @@ list_t *list_vnew(list_data_t x, ...)
 
     va_start(ap, x);
     list = list_new();
-    if (list == NULL)
-        return NULL;
+    assert(list);
     for (; x; x = va_arg(ap, list_data_t)) {
         NEW(tmp);
         tmp->data = x;
@@ -77,8 +75,10 @@ list_t *list_copy(list_t * list)
     if (__list_is_empty(list))
         return NULL;
     new_list = list_new();
+    assert(new_list);
     LIST_FOR_EACH(pos, list) {
         NEW(tmp);
+        assert(tmp);
         tmp->data = pos->data;
         __list_add_tail(new_list, tmp);
     }
@@ -94,8 +94,7 @@ list_t *list_from_array(list_data_t * array, size_t size)
     if (array == NULL || size == 0)
         return NULL;
     list = list_new();
-    if (list == NULL)
-        return NULL;
+    assert(list);
     for (i = 0; i < size; i++) {
         NEW(tmp);
         tmp->data = *array++;
@@ -116,8 +115,7 @@ list_data_t *list_to_array(list_t * list)
         return NULL;
     len = list_length(list);
     array = malloc(sizeof(list_data_t) * len);
-    if (array == NULL)
-        return NULL;
+    assert(array);
     LIST_FOR_EACH(pos, list)
         * array++ = pos->data;
     return array;
@@ -161,8 +159,7 @@ list_node_t *list_add_head(list_t * list, list_data_t data)
     assert(list && data);
 
     NEW(node);
-    if (node == NULL)
-        return NULL;
+    assert(node);
     __list_add_head(list, node);
     node->data = data;
     return node;
@@ -180,8 +177,7 @@ list_node_t *list_add_tail(list_t * list, list_data_t data)
     assert(list && data);
 
     NEW(node);
-    if (node == NULL)
-        return NULL;
+    assert(node);
     __list_add_tail(list, node);
     node->data = data;
     return node;
@@ -306,13 +302,12 @@ int list_length(list_t * list)
     int count;
     list_node_t *pos;
 
+    count = 0;
     if (list) {
-        count = 0;
         LIST_FOR_EACH(pos, list)
             count++;
-        return count;
     }
-    return 0;
+    return count;
 }
 
 void list_map(list_t * list, void apply(list_data_t * data, void *aux),
