@@ -27,15 +27,22 @@ void test_list(void)
     list_free(list);
 
     EXPECT_NE_NULL(list = list_vnew("This", "is", "a", "test", NULL));
-    EXPECT_FLASE(list_is_empty(list));
     EXPECT_NE_NULL(copy = list_copy(list));
+    
+    EXPECT_FLASE(list_is_empty(list));
+    EXPECT_EQ_STR("This", list_del_head(list));
+    EXPECT_EQ_STR("is", list_del_head(list));
+    EXPECT_EQ_STR("a", list_del_head(list));
+    EXPECT_EQ_STR("test", list_del_head(list));
+    EXPECT_TRUE(list_is_empty(list));
+    list_free(list);
+
     EXPECT_FLASE(list_is_empty(copy));
     EXPECT_EQ_STR("This", list_del_head(copy));
     EXPECT_EQ_STR("is", list_del_head(copy));
     EXPECT_EQ_STR("a", list_del_head(copy));
     EXPECT_EQ_STR("test", list_del_head(copy));
     EXPECT_TRUE(list_is_empty(copy));
-    list_free(list);
     list_free(copy);
 }
 
