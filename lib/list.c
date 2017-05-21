@@ -11,6 +11,27 @@
 #define NEW(ptr) ptr = malloc(sizeof(*(ptr)))
 #define FREE(ptr) free((ptr)), ptr = NULL
 
+#define LIST_STATIC_INIT(name)   \
+    const list_t name = {&name, &name, NULL}
+
+#define LIST_FOR_EACH_DIR(pos, list, dir) \
+    for ((pos) = (list)->dir; (pos) != (list); pos = (pos)->dir)
+
+#define LIST_FOR_EACH(pos, list) \
+    LIST_FOR_EACH_DIR((pos), (list), next)
+
+#define LIST_FOR_EACH_PREV(pos, list) \
+    LIST_FOR_EACH_DIR((pos), (list), prev)
+
+#define LIST_FOR_EACH_SAFE_DIR(pos, save, list, dir) \
+    for ((pos) = (list)->dir; (save) = (pos)->dir, (pos) != (list); (pos) = (save))
+
+#define LIST_FOR_EACH_SAFE(pos, save, list) \
+    LIST_FOR_EACH_SAFE_DIR((pos), (save), (list), next)
+
+#define LIST_FOR_EACH_SAFE_PREV(pos, save, list) \
+    LIST_FOR_EACH_SAFE_DIR((pos), (save), (list), prev)
+
 enum {
     FLASE = 0,
     TRUE = 1,

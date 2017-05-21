@@ -12,27 +12,6 @@ typedef struct __list_node list_node_t;
 typedef struct __list_node list_t;
 typedef void *list_data_t;
 
-#define LIST_STATIC_INIT(name)   \
-    const list_t name = {&name, &name, NULL}
-
-#define LIST_FOR_EACH_DIR(pos, list, dir) \
-    for ((pos) = (list)->dir; (pos) != (list); pos = (pos)->dir)
-
-#define LIST_FOR_EACH(pos, list) \
-    LIST_FOR_EACH_DIR((pos), (list), next)
-
-#define LIST_FOR_EACH_PREV(pos, list) \
-    LIST_FOR_EACH_DIR((pos), (list), prev)
-
-#define LIST_FOR_EACH_SAFE_DIR(pos, save, list, dir) \
-    for ((pos) = (list)->dir; (save) = (pos)->dir, (pos) != (list); (pos) = (save))
-
-#define LIST_FOR_EACH_SAFE(pos, save, list) \
-    LIST_FOR_EACH_SAFE_DIR((pos), (save), (list), next)
-
-#define LIST_FOR_EACH_SAFE_PREV(pos, save, list) \
-    LIST_FOR_EACH_SAFE_DIR((pos), (save), (list), prev)
-
 extern list_t *list_new(void);
 extern list_t *list_vnew(list_data_t x, ...);
 extern list_t *list_copy(list_t * list);
