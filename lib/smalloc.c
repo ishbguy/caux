@@ -17,12 +17,9 @@ typedef struct __smalloc_node {
     list_node_t *node;
     size_t size;
     int magic;
-    void *ptr;
 } smalloc_t;
 
 static LIST_STATIC_INIT(smalloc_list);
-static size_t smalloc_count = 0;
-static size_t smalloc_size = 0;
 static int atexit_free_flag = 1;
 
 void *smalloc(size_t size)
@@ -37,14 +34,11 @@ void *smalloc(size_t size)
     header->node = list_add_tail(&smalloc_list, header);
     header->size = size;
     header->magic = XMAGIC;
-    header->ptr = header + 1;
     if (atexit_free_flag) {
         atexit(sfree_all);
         atexit_free_flag = 0;
     }
-    smalloc_count++;
-    smalloc_size += size;
-    return header->ptr;
+    return header + 1;
 }
 
 void sfree(void *ptr)
@@ -56,8 +50,6 @@ void sfree(void *ptr)
         if (header->node == NULL || header->magic != XMAGIC)
             return;
         list_del_node(header->node);
-        smalloc_size -= header->size;
-        smalloc_count--;
         FREE(header);
     }
 }
@@ -108,17 +100,15 @@ char *sstrdup(const char *str)
 
 void sfree_all(void)
 {
-    list_t *list, *pos;
+    list_t *list, *pos, *save;
 
     if (list_is_empty(&smalloc_list))
         return;
     list = &smalloc_list;
-    LIST_FOR_EACH(pos, list) {
+    LIST_FOR_EACH_SAFE(pos, save, list) {
         FREE(pos->data);
         list_del_node(pos);
     }
-    smalloc_size = 0;
-    smalloc_count = 0;
 }
 
 /* vim:set ft=c ts=4 sw=4: */
