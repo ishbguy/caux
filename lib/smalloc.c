@@ -26,7 +26,7 @@ void *smalloc(size_t size)
 {
     smalloc_t *header;
 
-    if (size == 0)
+    if (size <= 0)
         return NULL;
     MALLOC(header, sizeof(smalloc_t) + size);
     if (header == NULL)
@@ -58,7 +58,7 @@ void *scalloc(size_t nmemb, size_t size)
 {
     void *ptr;
 
-    if (nmemb == 0 || size == 0)
+    if (nmemb <= 0 || size <= 0)
         return NULL;
     ptr = smalloc(nmemb * size);
     if (ptr)
@@ -72,7 +72,7 @@ void *srealloc(void *ptr, size_t size)
     void *new_ptr;
     smalloc_t *header;
 
-    if (ptr == NULL || size == 0)
+    if (ptr == NULL || size <= 0)
         return NULL;
     header = (smalloc_t *) ptr - 1;
     if (header->node == NULL || header->magic != XMAGIC)
