@@ -5,7 +5,7 @@
 
 #include <stdio.h>
 #include "../lib/list.h"
-#include "framework.h"
+#include "../lib/cunit.h"
 
 void test_list(void)
 {

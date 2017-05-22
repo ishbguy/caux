@@ -3,7 +3,7 @@
  *               All Rights Reserved.
  */
 
-#include "framework.h"
+#include "cunit.h"
 
 int main_ret = 0;
 int test_count = 0;
