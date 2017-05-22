@@ -32,14 +32,18 @@ void test_smalloc(void)
     FREE(ptr);
     EXPECT_NE_NULL(NEW0(ptr));
     FREE(ptr);
-    EXPECT_NE_NULL(CALLOC(ptr, 1, UINT32_MAX));
+    EXPECT_NE_NULL(CALLOC(ptr, 1, 1000));
     FREE(ptr);
-    EXPECT_EQ_NULL(CALLOC(ptr, 1, UINT32_MAX+1));
+    EXPECT_NE_NULL(CALLOC(ptr, 1000, 1000));
     FREE(ptr);
-    EXPECT_NE_NULL(CALLOC(ptr, 1, UINT32_MAX*2));
+
+    EXPECT_NE_NULL(CALLOC(ptr, 1, 1000));
+    EXPECT_NE_NULL(REALLOC(ptr, 100));
+    EXPECT_NE_NULL(REALLOC(ptr, 1000));
+    EXPECT_EQ_NULL(REALLOC(ptr, 0));
     FREE(ptr);
-    EXPECT_NE_NULL(CALLOC(ptr, 1, -1));
-    FREE(ptr);
+    EXPECT_EQ_STR("hello", strdup("hello"));
+    EXPECT_EQ_NULL(STRDUP(ptr, NULL));
 }
 
 UnitTest tests[] = {

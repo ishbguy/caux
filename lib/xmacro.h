@@ -7,6 +7,7 @@
 #define __XMACRO_H__
 
 #include <stdlib.h>
+#include <string.h>
 
 /* compile as c++ code */
 #ifdef __cplusplus
@@ -96,7 +97,7 @@
 /* memory allocated functions macros. */
 #define MALLOC(ptr, size) ptr = malloc(size)
 #define CALLOC(ptr, num, size) ptr = calloc(num, size)
-#define REALLOC(ptr, size) ptr = realloc(size)
+#define REALLOC(ptr, size) ptr = realloc(ptr, size)
 #define STRDUP(dest, src) dest = strdup(src)
 #define NEW(ptr) ptr = malloc(sizeof(*(ptr)))
 #define NEW0(ptr) ptr = calloc(1, sizeof(*(ptr)))
