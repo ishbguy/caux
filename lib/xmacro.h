@@ -99,6 +99,7 @@
 #define REALLOC(ptr, size) ptr = realloc(size)
 #define STRDUP(dest, src) dest = strdup(src)
 #define NEW(ptr) ptr = malloc(sizeof(*(ptr)))
+#define NEW0(ptr) ptr = calloc(1, sizeof(*(ptr)))
 #define FREE(ptr) free((ptr)), ptr = NULL
 
 #endif /* End of include guard: __XMACRO_H__ */

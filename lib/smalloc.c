@@ -32,7 +32,8 @@ void *smalloc(size_t size)
     if (size == 0)
         return NULL;
     MALLOC(header, sizeof(smalloc_t) + size);
-    assert(header);
+    if (header == NULL)
+        return NULL;
     header->node = list_add_tail(&smalloc_list, header);
     header->size = size;
     header->magic = XMAGIC;
@@ -52,7 +53,7 @@ void sfree(void *ptr)
 
     if (ptr) {
         header = (smalloc_t *) ptr - 1;
-        if (header->magic != XMAGIC)
+        if (header->node == NULL || header->magic != XMAGIC)
             return;
         list_del_node(header->node);
         smalloc_size -= header->size;
@@ -63,18 +64,13 @@ void sfree(void *ptr)
 
 void *scalloc(size_t nmemb, size_t size)
 {
-    size_t total;
     void *ptr;
 
     if (nmemb == 0 || size == 0)
         return NULL;
-    total = nmemb * size;
-    if (total > UINT32_MAX)
-        return NULL;
-    ptr = smalloc(total);
-    if (ptr == NULL)
-        return NULL;
-    memset(ptr, 0, total);
+    ptr = smalloc(nmemb * size);
+    if (ptr)
+        memset(ptr, 0, nmemb * size);
     return ptr;
 }
 
@@ -91,10 +87,10 @@ void *srealloc(void *ptr, size_t size)
         return NULL;
     copy_size = header->size;
     new_ptr = smalloc(size);
-    if (new_ptr == NULL)
-        return NULL;
-    memcpy(new_ptr, ptr, copy_size < size ? copy_size : size);
-    sfree(ptr);
+    if (new_ptr) {
+        memcpy(new_ptr, ptr, copy_size < size ? copy_size : size);
+        sfree(ptr);
+    }
     return new_ptr;
 }
 
@@ -105,9 +101,8 @@ char *sstrdup(const char *str)
     if (str == NULL)
         return NULL;
     new_str = smalloc(strlen(str) + 1);
-    if (new_str == NULL)
-        return NULL;
-    strcpy(new_str, str);
+    if (new_str)
+        strcpy(new_str, str);
     return new_str;
 }
 
