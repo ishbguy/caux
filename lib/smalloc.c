@@ -26,7 +26,8 @@ void *smalloc(size_t size)
 {
     smalloc_t *header;
 
-    if (size <= 0)
+    /* Make sure that the size will not overflow. */
+    if (size <= 0 || size + sizeof(smalloc_t) < size)
         return NULL;
     MALLOC(header, sizeof(smalloc_t) + size);
     if (header == NULL)
