@@ -45,8 +45,8 @@ extern list_t *list_vnew(list_data_t x, ...);
 extern list_t *list_copy(list_t * list);
 extern list_t *list_from_array(list_data_t * array, size_t size);
 extern list_data_t *list_to_array(list_t * list);
-extern void list_free(list_t ** list);
-extern void list_free_node(list_t * list);
+extern void list_free(list_t * list);
+extern void list_node_free(list_t * list);
 extern list_node_t *list_add_head(list_t * list, list_data_t data);
 extern list_node_t *list_add_tail(list_t * list, list_data_t data);
 extern list_data_t list_del_node(list_node_t * node);
@@ -61,7 +61,7 @@ extern void list_map(list_t * list, void apply(list_data_t * data, void *aux),
 #define LIST_NEW(list) list = list_new()
 #define LIST_VNEW(list, x, ...) list = list_vnew(x, ##__VA_ARGS__)
 #define LIST_COPY(dest, src) dest = list_copy((src))
-#define LIST_FREE(list) list_free(&(list))
+#define LIST_FREE(list) list_free(list), list = NULL
 
 #define LIST_FROM_ARRAY(list, array) \
     list = list_from_array((list_data_t *)(array), NELEM(array))

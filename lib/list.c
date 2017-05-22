@@ -112,7 +112,7 @@ list_data_t *list_to_array(list_t * list)
     return array;
 }
 
-void list_free_node(list_t * list)
+void list_node_free(list_t * list)
 {
     list_node_t *pos, *save;
 
@@ -121,11 +121,11 @@ void list_free_node(list_t * list)
             list_del_node(pos);
 }
 
-void list_free(list_t ** list)
+void list_free(list_t * list)
 {
     if (list) {
-        list_free_node(*list);
-        FREE(*list);
+        list_node_free(list);
+        FREE(list);
     }
 }
 
