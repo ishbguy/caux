@@ -17,11 +17,13 @@ void test_smalloc(void)
     FREE(ptr);
     EXPECT_NE_NULL(NEW(ptr));
     FREE(ptr);
-    EXPECT_NE_NULL(MALLOC(ptr, UINT32_MAX));
+    EXPECT_EQ_NULL(MALLOC(ptr, UINT32_MAX - 12));
     FREE(ptr);
-    EXPECT_EQ_NULL(MALLOC(ptr, UINT32_MAX+1));
+    EXPECT_EQ_NULL(MALLOC(ptr, UINT32_MAX - 13));
     FREE(ptr);
-    EXPECT_NE_NULL(MALLOC(ptr, -1));
+    EXPECT_EQ_NULL(MALLOC(ptr, UINT32_MAX + 1));
+    FREE(ptr);
+    EXPECT_EQ_NULL(MALLOC(ptr, -1));
     FREE(ptr);
 
     EXPECT_EQ_NULL(CALLOC(ptr, 1, 0));
