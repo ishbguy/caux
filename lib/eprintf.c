@@ -22,10 +22,26 @@ void eprintf(char *fmt, ...)
     va_end(ap);
     if (fmt[0] != '\0' && fmt[strlen(fmt) - 1] == ':')
         fprintf(stderr, " %s", strerror(errno));
-    fprintf(stderr, "\n");
+    fprintf(stderr, ".\n");
     fflush(NULL);               /* flushes all stdio output streams */
 
     exit(EXIT_FAILURE);
+}
+
+void weprintf(char *fmt, ...)
+{
+    va_list ap;
+
+    fflush(stdout);             /* in case stdout and stderr are the same */
+    if (progname() != NULL)
+        fprintf(stderr, "%s: ", progname());
+    va_start(ap, fmt);
+    vfprintf(stderr, fmt, ap);
+    va_end(ap);
+    if (fmt[0] != '\0' && fmt[strlen(fmt) - 1] == ':')
+        fprintf(stderr, " %s", strerror(errno));
+    fprintf(stderr, ".\n");
+    fflush(NULL);               /* flushes all stdio output streams */
 }
 
 char *estrdup(char *str, const char *file, const int line, const char *caller)
@@ -43,7 +59,7 @@ void *emalloc(size_t size, const char *file, const int line, const char *caller)
     void *ptr = smalloc(size);
 
     if (ptr == NULL)
-        eprintf("%s:%d: %s: %s(%d) failed:", file, line, caller, __func__,
+        eprintf("%s:%d: %s: %s(%u) failed:", file, line, caller, __func__,
                 size);
     return ptr;
 }
@@ -54,7 +70,7 @@ void *ecalloc(size_t nmemb, size_t size, const char *file, const int line,
     void *ptr = scalloc(nmemb, size);
 
     if (ptr == NULL)
-        eprintf("%s:%d: %s: %s(%d, %d) failed:", file, line, caller, __func__,
+        eprintf("%s:%d: %s: %s(%u, %u) failed:", file, line, caller, __func__,
                 nmemb, size);
     return ptr;
 }
@@ -65,14 +81,14 @@ void *erealloc(void *ptr, size_t size, const char *file, const int line,
     void *nptr = srealloc(ptr, size);
 
     if (nptr == NULL)
-        eprintf("%s:%d: %s: %s(%p, %d) failed:", file, line, caller, __func__,
+        eprintf("%s:%d: %s: %s(%p, %u) failed:", file, line, caller, __func__,
                 ptr, size);
     return nptr;
 }
 
-size_t efree(void *ptr, const char *file, const int line, const char *caller)
+void efree(void *ptr, const char *file, const int line, const char *caller)
 {
-    return sfree(ptr);
+    sfree(ptr);
 }
 
 static char *name = NULL;       /* program name for messages. */

@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include <assert.h>
+#include <errno.h>
 #include "xmacro.h"
 #include "list.h"
 
@@ -27,11 +27,15 @@ void *smalloc(size_t size)
     smalloc_t *header;
 
     /* Make sure that the size will not overflow. */
-    if (size <= 0 || size + sizeof(smalloc_t) < size)
+    if (size <= 0 || size + sizeof(smalloc_t) < size) {
+        errno = EINVAL;
         return NULL;
+    }
     MALLOC(header, sizeof(smalloc_t) + size);
-    if (header == NULL)
+    if (header == NULL) {
+        errno = ENOMEM;
         return NULL;
+    }
     header->node = list_add_tail(&smalloc_list, header);
     header->size = size;
     header->magic = XMAGIC;
@@ -48,8 +52,10 @@ void sfree(void *ptr)
 
     if (ptr) {
         header = (smalloc_t *) ptr - 1;
-        if (header->node == NULL || header->magic != XMAGIC)
+        if (header->node == NULL || header->magic != XMAGIC) {
+            errno = EINVAL;
             return;
+        }
         list_del_node(header->node);
         FREE(header);
     }
@@ -59,8 +65,10 @@ void *scalloc(size_t nmemb, size_t size)
 {
     void *ptr;
 
-    if (nmemb <= 0 || size <= 0)
+    if (nmemb <= 0 || size <= 0) {
+        errno = EINVAL;
         return NULL;
+    }
     ptr = smalloc(nmemb * size);
     if (ptr)
         memset(ptr, 0, nmemb * size);
@@ -73,11 +81,15 @@ void *srealloc(void *ptr, size_t size)
     void *new_ptr;
     smalloc_t *header;
 
-    if (ptr == NULL || size <= 0)
+    if (ptr == NULL || size <= 0) {
+        errno = EINVAL;
         return NULL;
+    }
     header = (smalloc_t *) ptr - 1;
-    if (header->node == NULL || header->magic != XMAGIC)
+    if (header->node == NULL || header->magic != XMAGIC) {
+        errno = EINVAL;
         return NULL;
+    }
     copy_size = header->size;
     new_ptr = smalloc(size);
     if (new_ptr) {
@@ -91,8 +103,10 @@ char *sstrdup(const char *str)
 {
     char *new_str;
 
-    if (str == NULL)
+    if (str == NULL) {
+        errno = EINVAL;
         return NULL;
+    }
     new_str = smalloc(strlen(str) + 1);
     if (new_str)
         strcpy(new_str, str);
