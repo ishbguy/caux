@@ -22,7 +22,7 @@ void eprintf(char *fmt, ...)
     va_end(ap);
     if (fmt[0] != '\0' && fmt[strlen(fmt) - 1] == ':')
         fprintf(stderr, " %s", strerror(errno));
-    fprintf(stderr, ".\n");
+    fprintf(stderr, "\n");
     fflush(NULL);               /* flushes all stdio output streams */
 
     exit(EXIT_FAILURE);

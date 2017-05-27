@@ -27,9 +27,9 @@ extern char *progname(void);
 extern void setprogname(char *str);
 
 #define XPRINTF(fmt, ...) \
-    eprintf("%s:%d: %s: " #fmt, __FILE__, __LINE__, __func__, ##__VA_ARGS__)
+    eprintf("%s:%d: %s: " fmt, __FILE__, __LINE__, __func__, ##__VA_ARGS__)
 #define WPRINTF(fmt, ...) \
-    eprintf("%s:%d: %s: " #fmt, __FILE__, __LINE__, __func__, ##__VA_ARGS__)
+    eprintf("%s:%d: %s: " fmt, __FILE__, __LINE__, __func__, ##__VA_ARGS__)
 #define XSTRDUP(str) \
     estrdup((str), __FILE__, __LINE__, __func__)
 #define XMALLOC(size) \
