@@ -95,13 +95,56 @@
     for (ptr = a; ptr && *ptr; ptr++)
 
 /* memory allocated functions macros. */
-#define MALLOC(ptr, size) ptr = malloc(size)
-#define CALLOC(ptr, num, size) ptr = calloc(num, size)
-#define REALLOC(ptr, size) ptr = realloc(ptr, size)
-#define STRDUP(dest, src) dest = strdup(src)
 #define NEW(ptr) ptr = malloc(sizeof(*(ptr)))
 #define NEW0(ptr) ptr = calloc(1, sizeof(*(ptr)))
 #define FREE(ptr) free((ptr)), ptr = NULL
+
+/* define generic xmacro list */
+struct __xlist_node {
+    void *data;
+    struct __xlist_node *next;
+};
+
+#define XLIST_NEW(l) struct __xlist_node *l = NULL
+
+#define XLIST_ADD(l, d) do {         \
+    struct __xlist_node *n;          \
+    NEW0(n);                         \
+    n->data = d;                     \
+    n->next = l;                     \
+    l = n;                           \
+} while (0)
+
+#define XLIST_DEL(l, d) do {         \
+    struct __xlist_node *n;          \
+    if (l) {                         \
+        n = l;                       \
+        d = n->data;                 \
+        l = n->next;                 \
+        FREE(n);                     \
+    }                                \
+} while (0)
+
+#define XLIST_FREE(l) do {           \
+    struct __xlist_node *n;          \
+    while (l) {                      \
+        n = l;                       \
+        l = n->next;                 \
+        free(n);                     \
+    }                                \
+} while (0)
+
+#define XLIST_FOR_EACH(n, l)         \
+    for (n = l; n; n = n->next)
+#define XLIST_FOR_EACH_SAFE(n, s, l) \
+    for (n = l; n? s = n->next, n: n; n = s)
+
+#define XSTACK_T struct __xlist_node
+#define XSTACK_NODE_T struct __xlist_node
+#define XSTACK_NEW(s) XLIST_NEW(s)
+#define XSTACK_PUSH(s, d) XLIST_ADD((s), (d))
+#define XSTACK_POP(s, d) XLIST_DEL((s), (d))
+#define XSTACK_FREE(s) XLIST_FREE(s)
 
 #endif /* End of include guard: __XMACRO_H__ */
 
