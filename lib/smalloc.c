@@ -16,7 +16,7 @@
 typedef struct __smalloc_node {
     list_node_t *node;
     size_t size;
-    int magic;
+    void *ptr;
 } smalloc_t;
 
 static LIST_STATIC_INIT(smalloc_list);
@@ -27,18 +27,18 @@ void *smalloc(size_t size)
     smalloc_t *header;
 
     /* Make sure that the size will not overflow. */
-    if (size <= 0 || size + sizeof(smalloc_t) < size) {
+    if (size <= 0 || size + sizeof(*header) < size) {
         errno = EINVAL;
         return NULL;
     }
-    MALLOC(header, sizeof(smalloc_t) + size);
+    header = malloc(sizeof(*header) + size);
     if (header == NULL) {
         errno = ENOMEM;
         return NULL;
     }
     header->node = list_add_tail(&smalloc_list, header);
     header->size = size;
-    header->magic = XMAGIC;
+    header->ptr = header + 1;
     if (atexit_free_flag) {
         atexit(sfree_all);
         atexit_free_flag = 0;
@@ -52,7 +52,7 @@ void sfree(void *ptr)
 
     if (ptr) {
         header = (smalloc_t *) ptr - 1;
-        if (header->node == NULL || header->magic != XMAGIC) {
+        if (header->node == NULL || header->ptr != ptr) {
             errno = EINVAL;
             return;
         }
@@ -86,7 +86,7 @@ void *srealloc(void *ptr, size_t size)
         return NULL;
     }
     header = (smalloc_t *) ptr - 1;
-    if (header->node == NULL || header->magic != XMAGIC) {
+    if (header->node == NULL || header->ptr != ptr) {
         errno = EINVAL;
         return NULL;
     }
